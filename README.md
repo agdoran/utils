@@ -1,10 +1,11 @@
-rg_checker.pl
+# rg_checker.pl
 
 To run, pipe from samtools view to this script. Please ensure samtools view also generates the header for additional checks.
 Run as shown:
 
+```
 samtools view -h $BAM | perl rg_checker.pl 
-
+```
 
 This will generate two sections of output. All headers are prefixed with #. All output is to STDOUT.
 Every 1 million lines a status will be printed to STDERR with a timestamp. 
