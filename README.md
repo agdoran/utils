@@ -1,4 +1,4 @@
-## rg_checker
+## 1. rg_checker
 ### Check the read group info of a BAM / SAM for inconsistency 
 using ```rg_checker.pl```
 
@@ -43,7 +43,7 @@ The headers for these are:
 ##### Section 2 - Occurance of each RG tag in header and records
 In the second section of output, every row is prefixed with ## to easily extract later.
 This section lists each RG value from the BAM in a new row. Each row has three columns:
-1. the RG value, 
+1. the RG  
 2. the number of times this is present in the header (to identify duplicate entries)  
 3. the numbef of times a read has this RG value
 
@@ -52,6 +52,6 @@ This will identify instances where the RG entry is incorrectly written in the BA
 
 
 ###### Disclaimer
-This script comes with no assurances of usefulness, utility or accuracy and should be tested before use.
+Scripts here comes with no assurances of usefulness, utility or accuracy and should be tested before use.
 The author of this script has no responsibility to the performance of this script.
 The script can be downloaded, modified and redistributed as anyone sees fit. 
