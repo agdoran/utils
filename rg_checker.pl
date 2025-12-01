@@ -13,23 +13,25 @@ my $isdef = 0;
 
 my %colcount;
 my %RGcount;
+my %RGheadcount;
 
 # this will read from standard in (the BAM must be piped to this script)
 while(my $line = <>){
 	chomp $line;
 
-	# print processed lines counter to STDERR every 1 million rows
+	# print processed lines status to STDERR every 1 million rows
 	if($. % 1000000 == 0){
 		my $date = gmtime();
-		print STDERR "Processing line $.\t$date\n";
+		print STDERR "All lines to $. processed\t$date\n";
 		
 	}
 
-	# parse all RG rows in header
+	# parse RG rows in header
 	if($line =~ m/^\@RG/){
 		my $RGid = (split("\t", $line))[1];
 		$RGid =~ s/ID\://;
-		$RGcount{$RGid} = 0;
+		$RGcount{$RGid} = 0; # initialise RG hash - could add extra check to see if defined >1 times in header
+		$RGheadcount{$RGid}++;
 	}
 
 	# skip header after parsing RG rows
@@ -48,11 +50,17 @@ while(my $line = <>){
 			# count/increment the number of occurrances of the read RG 
 			my $rowrg = (split(/\:/, $cols[$i]))[2];
 
+			# check to ensure row RG tag is not null 
+			unless(defined $rowrg){
+				$rowrg = "ISNULL";
+			}
+
 			# check if the read RG is already defined (should be in the header)
 			if(exists $RGcount{$rowrg}){
 				$isdef++;
 			}else{
 				$notdef++;
+				$RGheadcount{$rowrg} = 0;
 			}
 
 			$RGcount{$rowrg}++;
@@ -71,15 +79,17 @@ while(my $line = <>){
 }
 
 #print header
-print "OneRG-in-row\tNoRG-in-row\tManyRG-in-row\tRGdefined-in-header\tRGnotDefined-in-header\n";
+print "#OneRG-in-row\tNoRG-in-row\tManyRG-in-row\tRGdefined-in-header\tRGnotDefined-in-header\n";
 # print metrics
 print "$rg\t$norg\t$mulrg\t$isdef\t$notdef\n";
 
 # print a count of the number rows with X number of columns
-print "RD_ID\tCount-of-rows\n";
+print "#RD_ID\tHeader-count\tCount-of-rows\n";
 foreach my $key (keys %RGcount){
 
-	print "$key\t$RGcount{$key}\n";
+	print "##$key\t$RGheadcount{$key}\t$RGcount{$key}\n";
 
 }
 
+$sdate = gmtime();
+print STDERR "Finished: $sdate\n";
